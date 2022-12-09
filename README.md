@@ -1,5 +1,5 @@
 # esp32-energy-monitor
-Logs interrupts received on pin 12 and 15 then sends the data to a Telegram bot. This code has been tested on an ESP32-CAM board. 
+Logs interrupts received on pin 12 or 15 then sends the data to a Telegram bot. This code has been tested on an ESP32-CAM board. 
 
 What this code does:
 
