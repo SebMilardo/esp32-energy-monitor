@@ -4,9 +4,9 @@ Logs interrupts received on pin 12 or 15 then sends the data to a Telegram bot. 
 What this code does:
 
 - Uses NTP to get time
-- Stores it
+- Stores it in RTC
 - Goes to deep sleep
-- Wakes up if an interrupt arrives on RTC pins 12 or 15
+- Wakes up if an interrupt arrives on pins 12 or 15
 - Stores timestamp and pin on SD-CARD
 - Periodically sends the recorded data to the Telegram bot or when an interrupt is received on pin 2
 
