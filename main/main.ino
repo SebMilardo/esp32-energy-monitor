@@ -17,7 +17,7 @@
 
 #define DBG_OUTPUT_PORT Serial
 #define uS_TO_S_FACTOR 1000000ULL /* Conversion factor for micro seconds to seconds */
-#define INTERVAL 3600
+#define INTERVAL 3600 * 24
 #define NTP_TRY 10
 #define DEBUG 0
 
