@@ -17,9 +17,10 @@
 
 #define DBG_OUTPUT_PORT Serial
 #define uS_TO_S_FACTOR 1000000ULL /* Conversion factor for micro seconds to seconds */
-#define INTERVAL 3600 * 24
+#define INTERVAL 3600 * 2
 #define NTP_TRY 10
 #define DEBUG 0
+#define FILENAME "/data.csv"
 
 ESP32Time rtc;
 RTC_DATA_ATTR unsigned long lastSync = 0;
@@ -141,7 +142,7 @@ bool sendFile(fs::FS& fs, const char* path) {
 bool connectToWifi() {
   WiFi.mode(WIFI_STA);
   WiFi.begin(SSID, PASSWORD);
-  
+
   // Wait for connection
   uint8_t i = 0;
   while (WiFi.status() != WL_CONNECTED && i++ < 60) {  //wait 30 seconds
@@ -185,7 +186,7 @@ time_t getNtpTime() {
 void append_time(int gpio) {
   digitalWrite(33, LOW);
   // Writing to sd card
-  appendFile(SD_MMC, "/data.csv", (rtc.getTime("%Y-%m-%d %H:%M:%S") + "," + String(gpio) + "\n").c_str());
+  appendFile(SD_MMC, FILENAME, (rtc.getTime("%Y-%m-%d %H:%M:%S") + "," + String(gpio) + "\n").c_str());
   digitalWrite(33, HIGH);
 }
 
@@ -219,7 +220,7 @@ void wakeup_reason() {
         }
         if (connected) {
           getNtpTime();
-          sendFile(SD_MMC, "/data.csv");
+          sendFile(SD_MMC, FILENAME);
         }
       } else {
         append_time(GPIO_NUM_12);
@@ -245,14 +246,16 @@ void setup() {
   if (((rtc.getEpoch() - lastSync) > INTERVAL) || lastSync == 0) {
     // Init and get the time
     bool connected = connectToWifi();
-    if (connected){
+    if (connected) {
       getNtpTime();
     }
 
     if (lastSync == 0) {
       // setup SD card
-      if (setupSD()){
-        writeFile(SD_MMC, "/data.csv", "Timestamp,Data\n");
+      if (setupSD()) {
+        if (!SD_MMC.exists(FILENAME)) {
+          writeFile(SD_MMC, FILENAME, "Timestamp,Data\n");
+        }
       }
       if (connected) {
         WiFiClientSecure client;
@@ -262,8 +265,8 @@ void setup() {
       }
     } else {
       if (connected) {
-        if (sendFile(SD_MMC, "/data.csv")) {
-          writeFile(SD_MMC, "/data.csv", "Timestamp,Data\n");
+        if (sendFile(SD_MMC, FILENAME)) {
+          writeFile(SD_MMC, FILENAME, "Timestamp,Data\n");
         }
       }
     }
