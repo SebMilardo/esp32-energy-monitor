@@ -17,7 +17,7 @@
 
 #define DBG_OUTPUT_PORT Serial
 #define uS_TO_S_FACTOR 1000000ULL /* Conversion factor for micro seconds to seconds */
-#define INTERVAL 3600 * 2
+#define INTERVAL 3600 * 3
 #define NTP_TRY 10
 #define DEBUG 0
 #define FILENAME "/data.csv"
@@ -123,7 +123,7 @@ bool sendFile(fs::FS& fs, const char* path) {
     UniversalTelegramBot bot(BOTtoken, client);
     String sent = bot.sendMultipartFormDataToTelegram("sendDocument", "document", rtc.getTime("%Y-%m-%d %H") + ".csv", "text/plain", CHAT_ID, size,
                                                       isMoreDataAvailable, getNextByte, nullptr, nullptr);
-    if (sent) {
+    if (sent.startsWith("{\"ok\":true")) {
       result = true;
     } else {
 #if DEBUG
